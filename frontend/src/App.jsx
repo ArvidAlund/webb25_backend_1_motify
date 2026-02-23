@@ -2,14 +2,24 @@ import { useState, useEffect } from 'react'
 import './App.css'
 import TopSongListItem from './components/TopSongListItem'
 import PlaylistCard from './components/PlaylistCard'
+import AuthModal from './components/AuthModal'
+import PlaylistsTab from './components/PlaylistsTab'
+import { useAuth } from './context/AuthContext'
 
 function App() {
+  const { user, loading: authLoading, login, register, logout } = useAuth()
+  const [activeTab, setActiveTab] = useState('discover')
+  const [authModalOpen, setAuthModalOpen] = useState(false)
   const [songs, setSongs] = useState([])
   const [playlists, setPlaylists] = useState([])
   const [loading, setLoading] = useState(true)
   const [playlistsLoading, setPlaylistsLoading] = useState(true)
   const [error, setError] = useState(null)
   const [playlistsError, setPlaylistsError] = useState(null)
+
+  useEffect(() => {
+    if (!user && activeTab === 'playlists') setActiveTab('discover')
+  }, [user, activeTab])
 
   useEffect(() => {
     fetch('/api/songs/popular')
@@ -32,20 +42,85 @@ function App() {
       <header className="header">
         <h1 className="logo">Motify</h1>
         <nav className="nav">
-          <a href="#discover">Discover</a>
-          <a href="#library">Library</a>
+          <button
+            type="button"
+            className={`nav-tab ${activeTab === 'discover' ? 'nav-tab-active' : ''}`}
+            onClick={() => setActiveTab('discover')}
+          >
+            Discover
+          </button>
+          <button
+            type="button"
+            className={`nav-tab ${activeTab === 'library' ? 'nav-tab-active' : ''}`}
+            onClick={() => setActiveTab('library')}
+          >
+            Library
+          </button>
+          {user && (
+            <button
+              type="button"
+              className={`nav-tab ${activeTab === 'playlists' ? 'nav-tab-active' : ''}`}
+              onClick={() => setActiveTab('playlists')}
+            >
+              Playlists
+            </button>
+          )}
+          {authLoading ? (
+            <span className="nav-auth-loading">…</span>
+          ) : user ? (
+            <div className="nav-user">
+              <span className="nav-user-email">{user.email}</span>
+              <button
+                type="button"
+                className="nav-logout"
+                onClick={logout}
+              >
+                Log out
+              </button>
+            </div>
+          ) : (
+            <button
+              type="button"
+              className="nav-login"
+              onClick={() => setAuthModalOpen(true)}
+            >
+              Log in
+            </button>
+          )}
         </nav>
       </header>
 
+      <AuthModal
+        isOpen={authModalOpen}
+        onClose={() => setAuthModalOpen(false)}
+        onSuccess={{ login, register }}
+      />
+
       <main className="main">
+        {activeTab === 'playlists' ? (
+          <PlaylistsTab />
+        ) : activeTab === 'library' ? (
+          <section className="library-placeholder">
+            <h2 className="section-title">Library</h2>
+            <p className="section-subtitle">Your saved music and playlists</p>
+            <p className="playlists-loading">Coming soon.</p>
+          </section>
+        ) : (
+          <>
         <section className="hero">
           <p className="tagline">Music at your fingertips</p>
           <p className="subtitle">
             Discover artists, build playlists, and lose yourself in sound.
           </p>
-          <button className="cta" type="button">
-            Get started
-          </button>
+          {!user && (
+            <button
+              className="cta"
+              type="button"
+              onClick={() => setAuthModalOpen(true)}
+            >
+              Get started
+            </button>
+          )}
         </section>
 
         <section className="top-songs">
@@ -87,6 +162,8 @@ function App() {
             </div>
           )}
         </section>
+          </>
+        )}
       </main>
     </div>
   )

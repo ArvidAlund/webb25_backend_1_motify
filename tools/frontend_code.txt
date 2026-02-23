@@ -1,0 +1,625 @@
+========================================================================
+eslint.config.js
+========================================================================
+
+import js from '@eslint/js'
+import globals from 'globals'
+import reactHooks from 'eslint-plugin-react-hooks'
+import reactRefresh from 'eslint-plugin-react-refresh'
+import { defineConfig, globalIgnores } from 'eslint/config'
+
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{js,jsx}'],
+    extends: [
+      js.configs.recommended,
+      reactHooks.configs.flat.recommended,
+      reactRefresh.configs.vite,
+    ],
+    languageOptions: {
+      ecmaVersion: 2020,
+      globals: globals.browser,
+      parserOptions: {
+        ecmaVersion: 'latest',
+        ecmaFeatures: { jsx: true },
+        sourceType: 'module',
+      },
+    },
+    rules: {
+      'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
+    },
+  },
+])
+
+========================================================================
+index.html
+========================================================================
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Motify</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
+
+========================================================================
+package.json
+========================================================================
+
+{
+  "name": "frontend",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.1",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react-swc": "^4.2.2",
+    "eslint": "^9.39.1",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-react-refresh": "^0.4.24",
+    "globals": "^16.5.0",
+    "vite": "^7.3.1"
+  }
+}
+
+========================================================================
+src/App.css
+========================================================================
+
+.homepage {
+  min-height: 100vh;
+  background: radial-gradient(ellipse 80% 50% at 50% -20%, rgba(139, 92, 246, 0.25), transparent),
+    radial-gradient(ellipse 60% 40% at 80% 60%, rgba(124, 58, 237, 0.15), transparent),
+    linear-gradient(180deg, #1a1625 0%, #15121d 50%, #0f0d14 100%);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+}
+
+.logo {
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: rgba(255, 255, 255, 0.95);
+  margin: 0;
+}
+
+.nav {
+  display: flex;
+  gap: 2rem;
+}
+
+.nav a {
+  color: rgba(255, 255, 255, 0.6);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: color 0.2s ease;
+}
+
+.nav a:hover {
+  color: rgba(216, 180, 254, 0.9);
+}
+
+.main {
+  padding: 2rem;
+}
+
+.hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 4rem 2rem 5rem;
+}
+
+.tagline {
+  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: rgba(255, 255, 255, 0.98);
+  margin: 0 0 1rem;
+  line-height: 1.1;
+}
+
+.subtitle {
+  font-size: 1.25rem;
+  color: rgba(255, 255, 255, 0.55);
+  margin: 0 0 2.5rem;
+  max-width: 28rem;
+}
+
+.cta {
+  padding: 0.875rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.cta:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(124, 58, 237, 0.4);
+}
+
+/* Top songs */
+.top-songs {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.section-header {
+  margin-bottom: 1.5rem;
+}
+
+.section-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.98);
+  margin: 0 0 0.25rem;
+  letter-spacing: -0.02em;
+}
+
+.section-subtitle {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.45);
+  margin: 0;
+}
+
+.songs-loading,
+.songs-error {
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0;
+}
+
+.songs-error {
+  color: #f87171;
+}
+
+.songs-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.songs-list-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1.25rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.4);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.col-rank { width: 2rem; text-align: center; }
+.col-info { flex: 1; }
+.col-meta { width: 3.5rem; text-align: right; }
+
+.songs-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.song-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1.25rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  transition: background 0.15s ease;
+}
+
+.song-item:last-child {
+  border-bottom: none;
+}
+
+.song-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.song-rank {
+  width: 2rem;
+  font-size: 1rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.35);
+  text-align: center;
+}
+
+.song-artist-thumb {
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: rgba(124, 58, 237, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.song-artist-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.song-artist-placeholder {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.song-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.song-title {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.song-artist {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.song-meta {
+  width: 3.5rem;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.4);
+  text-align: right;
+}
+
+.song-playcount {
+  font-weight: 500;
+  color: rgba(216, 180, 254, 0.7);
+}
+
+/* Latest playlists */
+.latest-playlists {
+  max-width: 720px;
+  margin: 4rem auto 0;
+}
+
+.playlists-loading,
+.playlists-error {
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0;
+}
+
+.playlists-error {
+  color: #f87171;
+}
+
+.playlists-row {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+}
+
+.playlists-row::-webkit-scrollbar {
+  height: 6px;
+}
+
+.playlists-row::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 3px;
+}
+
+.playlists-row::-webkit-scrollbar-thumb {
+  background: rgba(124, 58, 237, 0.4);
+  border-radius: 3px;
+}
+
+.playlist-card {
+  flex: 0 0 260px;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 1.25rem 1.5rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.playlist-card:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.playlist-card-icon {
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: 12px;
+  background: rgba(124, 58, 237, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: rgba(216, 180, 254, 0.8);
+  flex-shrink: 0;
+}
+
+.playlist-card-content {
+  min-width: 0;
+}
+
+.playlist-card-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.95);
+  margin: 0 0 0.25rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.playlist-card-meta {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.45);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+========================================================================
+src/App.jsx
+========================================================================
+
+import { useState, useEffect } from 'react'
+import './App.css'
+import TopSongListItem from './components/TopSongListItem'
+import PlaylistCard from './components/PlaylistCard'
+
+function App() {
+  const [songs, setSongs] = useState([])
+  const [playlists, setPlaylists] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [playlistsLoading, setPlaylistsLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const [playlistsError, setPlaylistsError] = useState(null)
+
+  useEffect(() => {
+    fetch('/api/songs/popular')
+      .then((res) => res.json())
+      .then((data) => setSongs(data))
+      .catch((err) => setError(err.message))
+      .finally(() => setLoading(false))
+  }, [])
+
+  useEffect(() => {
+    fetch('/api/playlists/latest')
+      .then((res) => res.json())
+      .then((data) => setPlaylists(data))
+      .catch((err) => setPlaylistsError(err.message))
+      .finally(() => setPlaylistsLoading(false))
+  }, [])
+
+  return (
+    <div className="homepage">
+      <header className="header">
+        <h1 className="logo">Motify</h1>
+        <nav className="nav">
+          <a href="#discover">Discover</a>
+          <a href="#library">Library</a>
+        </nav>
+      </header>
+
+      <main className="main">
+        <section className="hero">
+          <p className="tagline">Music at your fingertips</p>
+          <p className="subtitle">
+            Discover artists, build playlists, and lose yourself in sound.
+          </p>
+          <button className="cta" type="button">
+            Get started
+          </button>
+        </section>
+
+        <section className="top-songs">
+          <div className="section-header">
+            <h2 className="section-title">Top 10 songs</h2>
+            <p className="section-subtitle">Most played this week</p>
+          </div>
+          {loading && <p className="songs-loading">Loading...</p>}
+          {error && <p className="songs-error">{error}</p>}
+          {!loading && !error && songs.length > 0 && (
+            <div className="songs-card">
+              <div className="songs-list-header">
+                <span className="col-rank">#</span>
+                <span className="col-info">Track</span>
+                <span className="col-meta">Time</span>
+                <span className="col-meta">Plays</span>
+              </div>
+              <ul className="songs-list">
+                {songs.map((song, i) => (
+                  <TopSongListItem key={song._id} song={song} rank={i + 1} />
+                ))}
+              </ul>
+            </div>
+          )}
+        </section>
+
+        <section className="latest-playlists">
+          <div className="section-header">
+            <h2 className="section-title">Latest playlists</h2>
+            <p className="section-subtitle">Recently added</p>
+          </div>
+          {playlistsLoading && <p className="playlists-loading">Loading...</p>}
+          {playlistsError && <p className="playlists-error">{playlistsError}</p>}
+          {!playlistsLoading && !playlistsError && playlists.length > 0 && (
+            <div className="playlists-row">
+              {playlists.map((playlist) => (
+                <PlaylistCard key={playlist._id} playlist={playlist} />
+              ))}
+            </div>
+          )}
+        </section>
+      </main>
+    </div>
+  )
+}
+
+export default App
+
+========================================================================
+src/components/PlaylistCard.jsx
+========================================================================
+
+export default function PlaylistCard({ playlist }) {
+  const songCount = playlist.songs?.length ?? 0
+
+  return (
+    <article className="playlist-card">
+      <div className="playlist-card-icon" aria-hidden>♫</div>
+      <div className="playlist-card-content">
+        <h3 className="playlist-card-title">{playlist.name}</h3>
+        <p className="playlist-card-meta">
+          {songCount} {songCount === 1 ? 'song' : 'songs'}
+          {playlist.description && ` · ${playlist.description}`}
+        </p>
+      </div>
+    </article>
+  )
+}
+
+========================================================================
+src/components/TopSongListItem.jsx
+========================================================================
+
+export default function TopSongListItem({ song, rank }) {
+  function formatDuration(seconds) {
+    if (!seconds) return '--'
+    const m = Math.floor(seconds / 60)
+    const s = seconds % 60
+    return `${m}:${s.toString().padStart(2, '0')}`
+  }
+
+  function formatPlaycount(playcount) {
+    if (!playcount) return '--'
+    if (playcount < 1000000) {
+      return `${(playcount / 1000).toFixed(1)}K`
+    }
+    return `${(playcount / 1000000).toFixed(1)}M`
+  }
+
+  return (
+    <li className="song-item">
+      <span className="song-rank">{rank}</span>
+      <div className="song-artist-thumb">
+        {song.artist?.image ? (
+          <img src={song.artist.image} alt="" className="song-artist-image" />
+        ) : (
+          <span className="song-artist-placeholder" aria-hidden>♫</span>
+        )}
+      </div>
+      <div className="song-info">
+        <span className="song-title">{song.title}</span>
+        <span className="song-artist">{song.artist?.name ?? '—'}</span>
+      </div>
+      <span className="song-meta song-duration">{formatDuration(song.durationSeconds)}</span>
+      <span className="song-meta song-playcount">{formatPlaycount(song.playcount)}</span>
+    </li>
+  )
+}
+
+========================================================================
+src/index.css
+========================================================================
+
+:root {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #15121d;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+========================================================================
+src/main.jsx
+========================================================================
+
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import './index.css'
+import App from './App.jsx'
+
+createRoot(document.getElementById('root')).render(
+  <StrictMode>
+    <App />
+  </StrictMode>,
+)
+
+========================================================================
+vite.config.js
+========================================================================
+
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react-swc'
+
+// https://vite.dev/config/
+export default defineConfig({
+  plugins: [react()],
+  server: {
+    proxy: {
+      '/api': 'http://localhost:3000',
+      '/auth': 'http://localhost:3000',
+    },
+  },
+})
