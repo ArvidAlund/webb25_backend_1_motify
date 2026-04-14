@@ -14,6 +14,7 @@ const albumSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
+  sharedWith: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }]
 });
 
 albumSchema.index({ artist: 1, title: 1 }, { unique: true });
